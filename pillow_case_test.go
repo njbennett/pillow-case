@@ -8,5 +8,7 @@ import (
 )
 
 var _ = Describe("PillowCase", func() {
-
+	It("works", func() {
+		Expect(True()).To(Equal("true"))
+	})
 })
