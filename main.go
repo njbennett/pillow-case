@@ -2,6 +2,6 @@ package main
 
 func main() {}
 
-func True() string {
-	return "true"
+func Write(data string) error {
+	return nil
 }

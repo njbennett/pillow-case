@@ -1,14 +1,15 @@
 package main_test
 
 import (
-	. "github.com/njbennett/pillow-case"
+	pillow "github.com/njbennett/pillow-case"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("PillowCase", func() {
-	It("works", func() {
-		Expect(True()).To(Equal("true"))
+var _ = Describe("Write", func() {
+	It("accepts a string", func() {
+		err := pillow.Write("test")
+		Expect(err).ToNot(HaveOccurred())
 	})
 })
