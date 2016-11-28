@@ -8,6 +8,14 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var _ = Describe("Read", func() {
+	Context("when called on the test sheet", func() {
+		It("returns 'hello'", func() {
+			Expect(pillow.Read()).To(Equal("hello"))
+		})
+	})
+})
+
 var _ = Describe("Write", func() {
 	Context("when given a string and a sheets service", func() {
 		It("returns no error", func() {

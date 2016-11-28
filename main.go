@@ -7,3 +7,7 @@ func main() {}
 func Write(data string, srv *sheets.Service) error {
 	return nil
 }
+
+func Read() string {
+	return "hello"
+}
