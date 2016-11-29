@@ -10,8 +10,9 @@ import (
 
 var _ = Describe("Read", func() {
 	Context("when called on the test sheet", func() {
-		It("returns 'hello'", func() {
-			Expect(pillow.Read()).To(Equal("hello"))
+		It("returns the values in that sheet", func() {
+			Expect(pillow.Read("A1")).To(Equal("hello"))
+			Expect(pillow.Read("B2")).To(Equal("famicom"))
 		})
 	})
 })
