@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
+	gserviceaccount "github.com/knq/jwt/gserviceaccount"
 	"golang.org/x/net/context"
-
-	oauth2ClientCreds "golang.org/x/oauth2/clientcredentials"
+	oauth2Google "golang.org/x/oauth2/google"
 	sheets "google.golang.org/api/sheets/v4"
 )
 
@@ -16,14 +17,32 @@ func Write(data string, srv *sheets.Service) error {
 }
 
 func Read(cell string) string {
-	config := oauth2ClientCreds.Config{
-		ClientID:     os.Getenv("ClientID"),
-		ClientSecret: os.Getenv("ClientSecret"),
-		TokenURL:     os.Getenv("TokenURL"),
+
+	json_creds := []byte(os.Getenv("CLIENT_CREDENTIALS"))
+	fmt.Printf(os.Getenv("CLIENT_CREDENTIALS"))
+	config, err := oauth2Google.ConfigFromJSON(json_creds)
+	if err != nil {
+		panic(err)
+	}
+
+	service_acc, err := gserviceaccount.FromJSON(json_creds)
+	if err != nil {
+		panic(err)
+	}
+
+	var scopes string
+	token_source, err := service_acc.TokenSource(context.Background(), scopes)
+	if err != nil {
+		panic(err)
+	}
+
+	tok, err := token_source.Token()
+	if err != nil {
+		panic(err)
 	}
 
 	ctx := context.Background()
-	client := config.Client(ctx)
+	client := config.Client(ctx, tok)
 
 	srv, err := sheets.New(client)
 	if err != nil {
