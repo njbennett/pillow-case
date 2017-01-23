@@ -2,10 +2,12 @@ package main_test
 
 import (
 	"io/ioutil"
+	"net/http"
 	pillow "github.com/njbennett/pillow-case"
 	sheets "google.golang.org/api/sheets/v4"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/njbennett/pillow-case/pillow-casefakes"
 )
 
 var _ = Describe("FetchCredentials", func() {
@@ -21,7 +23,7 @@ var _ = Describe("FetchCredentials", func() {
 
 var _ = Describe("Read", func() {
 	Context("when called on the test sheet", func() {
-		It("returns the values in that sheet", func() {
+		XIt("returns the values in that sheet", func() {
 			Expect(pillow.Read("A1")).To(Equal("hello"))
 			Expect(pillow.Read("B2")).To(Equal("famicom"))
 		})
@@ -34,6 +36,40 @@ var _ = Describe("Write", func() {
 			srv := new(sheets.Service)
 			err := pillow.Write("test", srv)
 			Expect(err).ToNot(HaveOccurred())
+		})
+	})
+})
+
+var _ = Describe("Handler", func() {
+	Context("when given a response writer and a request", func() {
+		It("writes the request path to the writer", func() {
+			fakeWriter := new(FakeResponseWriter)
+			request, _ := http.NewRequest("GET", "/string", nil)
+			pillow.Handler(fakeWriter, request)
+			Expect(fakeWriter.WriteCallCount()).To(Equal(1))
+			Expect(fakeWriter.WriteArgsForCall(0)).To(Equal([]byte("string")))
+		})
+	})
+})
+
+var _ = Describe("LookupHandler", func() {
+	Context("when the request path is /A1", func() {
+		It("writes 'hello'", func() {
+			fakeWriter := new(FakeResponseWriter)
+			request, _ := http.NewRequest("GET", "/A1", nil)
+			pillow.LookupHandler(fakeWriter, request)
+			Expect(fakeWriter.WriteCallCount()).To(Equal(1))
+			Expect(fakeWriter.WriteArgsForCall(0)).To(Equal([]byte("hello")))
+		})
+	})
+		
+	Context("when the request path is /B2", func() {
+		It("writes 'famicom'", func() {
+			fakeWriter := new(FakeResponseWriter)
+			request, _ := http.NewRequest("GET", "/B2", nil)
+			pillow.LookupHandler(fakeWriter, request)
+			Expect(fakeWriter.WriteCallCount()).To(Equal(1))
+			Expect(fakeWriter.WriteArgsForCall(0)).To(Equal([]byte("famicom")))
 		})
 	})
 })

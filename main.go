@@ -3,6 +3,8 @@ package main
 import (
 	"io/ioutil"
 	"fmt"
+	"net/http"
+
 	gserviceaccount "github.com/knq/jwt/gserviceaccount"
 	"golang.org/x/net/context"
 	sheets "google.golang.org/api/sheets/v4"
@@ -57,4 +59,13 @@ func Read(cell string) string {
 	}
 	
 	return (resp.Values[0][0]).(string)
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, r.URL.Path[1:]) 
+}
+
+func LookupHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf(Read(r.URL.Path[1:]))
+	fmt.Fprintf(w, Read(r.URL.Path[1:]))
 }
