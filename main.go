@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"io/ioutil"
 
 	gserviceaccount "github.com/knq/jwt/gserviceaccount"
 	"golang.org/x/net/context"
@@ -12,14 +11,21 @@ import (
 
 func main() {}
 
+func FetchCredentials() ([]byte, error) {
+	dat, err := ioutil.ReadFile("./credentials")
+	return dat, err
+}
+
 func Write(data string, srv *sheets.Service) error {
 	return nil
 }
 
 func Read(cell string) string {
+	json_creds, err := FetchCredentials()
+	if err != nil {
+		panic(err)
+	}
 
-	json_creds := []byte(os.Getenv("CLIENT_CREDENTIALS"))
-	fmt.Printf(os.Getenv("CLIENT_CREDENTIALS"))
 	config, err := oauth2Google.ConfigFromJSON(json_creds)
 	if err != nil {
 		panic(err)

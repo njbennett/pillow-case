@@ -1,17 +1,20 @@
 package main_test
 
 import (
+	"io/ioutil"
 	pillow "github.com/njbennett/pillow-case"
 	sheets "google.golang.org/api/sheets/v4"
-	"os"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Environment setup", func() {
-	Context("when it checks client credentials", func() {
+var _ = Describe("FetchCredentials", func() {
+	Context("when a credentials file is present", func() {
 		It("returns client credentials", func() {
-			Expect([]byte(os.Getenv("CLIENT_CREDENTIALS"))).NotTo(Equal([]byte("")))
+			dat, err := ioutil.ReadFile("./credentials")
+			creds, err := pillow.FetchCredentials()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(creds).To(Equal(dat))
 		})
 	})
 })
