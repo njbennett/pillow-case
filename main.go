@@ -11,7 +11,10 @@ import (
 	oauth2 "golang.org/x/oauth2"
 )
 
-func main() {}
+func main() {
+	http.HandleFunc("/", LookupHandler)
+	http.ListenAndServe(":8080", nil)
+}
 
 func FetchCredentials() ([]byte, error) {
 	dat, err := ioutil.ReadFile("./credentials")
