@@ -57,6 +57,7 @@ var _ = Describe("LookupHandler", func() {
 		It("writes 'hello'", func() {
 			fakeWriter := new(FakeResponseWriter)
 			request, _ := http.NewRequest("GET", "/A1", nil)
+			pillow := new(pillow.Pillow)
 			pillow.LookupHandler(fakeWriter, request)
 			Expect(fakeWriter.WriteCallCount()).To(Equal(1))
 			Expect(fakeWriter.WriteArgsForCall(0)).To(Equal([]byte("hello")))
@@ -67,6 +68,7 @@ var _ = Describe("LookupHandler", func() {
 		It("writes 'famicom'", func() {
 			fakeWriter := new(FakeResponseWriter)
 			request, _ := http.NewRequest("GET", "/B2", nil)
+			pillow := new(pillow.Pillow)
 			pillow.LookupHandler(fakeWriter, request)
 			Expect(fakeWriter.WriteCallCount()).To(Equal(1))
 			Expect(fakeWriter.WriteArgsForCall(0)).To(Equal([]byte("famicom")))

@@ -11,8 +11,13 @@ import (
 	oauth2 "golang.org/x/oauth2"
 )
 
+type Pillow struct {
+
+}
+
 func main() {
-	http.HandleFunc("/", LookupHandler)
+	p := new(Pillow)
+	http.HandleFunc("/", p.LookupHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -25,7 +30,33 @@ func Write(data string, srv *sheets.Service) error {
 	return nil
 }
 
+
+
 func Read(cell string) string {
+	srv := getService()
+	spreadsheetId := "1upV1TrDjZMP4V_ARar0UfB5Yn21O4iHHWFy1c_7-4V8"
+	var readRange string
+	readRange = fmt.Sprintf("TestData!%s", cell)
+
+	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
+
+	if err != nil {
+		panic(err)
+	}
+	
+	return (resp.Values[0][0]).(string)
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, r.URL.Path[1:]) 
+}
+
+func (p *Pillow) LookupHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf(Read(r.URL.Path[1:]))
+	fmt.Fprintf(w, Read(r.URL.Path[1:]))
+}
+
+func getService() *sheets.Service {
 	json_creds, err := FetchCredentials()
 	if err != nil {
 		panic(err)
@@ -50,25 +81,5 @@ func Read(cell string) string {
 	if err != nil {
 		panic(err)
 	}
-
-	spreadsheetId := "1upV1TrDjZMP4V_ARar0UfB5Yn21O4iHHWFy1c_7-4V8"
-	var readRange string
-	readRange = fmt.Sprintf("TestData!%s", cell)
-
-	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
-
-	if err != nil {
-		panic(err)
-	}
-	
-	return (resp.Values[0][0]).(string)
-}
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, r.URL.Path[1:]) 
-}
-
-func LookupHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf(Read(r.URL.Path[1:]))
-	fmt.Fprintf(w, Read(r.URL.Path[1:]))
-}
+	return srv
+} 
