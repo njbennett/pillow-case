@@ -1,27 +1,20 @@
 package main_test
 
 import (
-	pillow "github.com/njbennett/pillow-case"
-	sheets "google.golang.org/api/sheets/v4"
+	"net/http"
 
+	pillow "github.com/njbennett/pillow-case"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
-var _ = Describe("Read", func() {
-	Context("when called on the test sheet", func() {
-		It("returns 'hello'", func() {
-			Expect(pillow.Read()).To(Equal("hello"))
-		})
-	})
-})
-
-var _ = Describe("Write", func() {
-	Context("when given a string and a sheets service", func() {
-		It("returns no error", func() {
-			srv := new(sheets.Service)
-			err := pillow.Write("test", srv)
-			Expect(err).ToNot(HaveOccurred())
-		})
+var _ = Describe("hello world handler", func() {
+	It("Returns 'Hello world'", func() {
+		server := ghttp.NewServer()
+		server.AppendHandlers(pillow.HelloWorldHandler)
+		request, err := http.NewRequest("Get", server.URL(), nil)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(request).To(Equal("Hello world"))
 	})
 })
